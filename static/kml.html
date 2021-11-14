@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+   #text{
+  position: absolute;
+  top: 20%;
+  left: 80%;
+  font-size: 15px;
+  font-family: sans-serif;
+  color: white;
+  transform: translate(-50%,-50%);
+  -ms-transform: translate(-50%,-50%);
+  background:rgba(42,42,42,.8);
+  padding:4px;border:1px solid #444;
+  border-radius:4px
+   }
+</style>
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.82/Build/Cesium/Cesium.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.82/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+
+  <link href="style.css" rel="stylesheet">
+</head>
+<body>
+  <div id="cesiumContainer"></div>
+  <div id="text">
+    <table class="infopane">
+      <tbody>
+        <tr>
+          <td><div id="position"></div></td>
+        </tr>
+        <tr>
+          <td><div id="altitude"></div></td>
+        </tr>
+        <tr>
+          <td><div id="ascr"></div></td>
+        </tr>
+        <tr>
+          <td><div id="distance"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    // Get your token from https://cesium.com/ion/tokens
+Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3YzRhZTJkMC1kMjJmLTQxYjItOTQ1NC1iZDY5ZTNiYjZjODEiLCJpZCI6NzA1NjUsImlhdCI6MTYzNDQ2MjUzN30.0kU5sLG38jeI0KMJjNeXrzA6YMaCQ7UfgO2KDN9Ng00';
+
+const viewer = new Cesium.Viewer('cesiumContainer', {
+  terrainProvider: Cesium.createWorldTerrain()
+});
+
+var kmlDataSource = new Cesium.KmlDataSource();
+kmlDataSource.load('prova.kml');
+viewer.dataSources.add(kmlDataSource);
+
+var kmlDataSourceCotxe = new Cesium.KmlDataSource();
+kmlDataSourceCotxe.load('cotxe.kml');
+viewer.dataSources.add(kmlDataSourceCotxe);
+
+
+var clock = viewer.clock
+var lastUpdated = clock.currentTime
+    //Configure clock
+    clock.onTick.addEventListener(function() {
+      var dt = Cesium.JulianDate.secondsDifference(clock.currentTime, lastUpdated);
+      if (dt >= 2.0) {
+        var balloonCoordinates = ''
+        lastUpdated = clock.currentTime
+        kmlDataSource.load('prova.kml');
+        $.getJSON('http://127.0.0.1:5000/balloonData', function (data) {
+         document.getElementById("position").innerHTML = 'Coordinates: ' + data.position
+         document.getElementById("altitude").innerHTML = 'Altitude: ' + data.altitude + ' m'
+         document.getElementById("ascr").innerHTML = 'Ascend Rate: ' + data.ascend_rate + ' m/s'
+         balloonCoordinates = data.position
+        });
+        $.get('http://127.0.0.1:5000/carPosition', function (data) {
+          var c1 = balloonCoordinates.split(',')
+          var c2 = data.split(',')
+          var p1 = Cesium.Cartesian3.fromDegrees(c1[0], c1[1], c1[2])
+          var p2 = Cesium.Cartesian3.fromDegrees(c2[0], c2[1], c2[2])
+          var distance = Cesium.Cartesian3.distance(p1, p2).toFixed(2);
+          document.getElementById("distance").innerHTML = 'Distance: ' + distance + ' m'
+        });
+      }
+    });
+
+  </script>
+</body>
+</html>

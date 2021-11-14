@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+<name>Flight Path</name>
+<description><![CDATA[Flight data for flight fc771888ca17d2c194e781b96fb96ec9e98e2d12 <br>Site: 41.6552, 359.109 at 9:30 on 30/10/2021]]></description>
+<Style id="yellowPoly">
+<LineStyle>
+<color>7f00ffff</color>
+<width>4</width>
+</LineStyle>
+<PolyStyle>
+<color>7f00ff00</color>
+</PolyStyle>
+</Style>
+<Placemark>
+<name>Flight path</name>
+<description>Ascent rate: 5m/s, descent rate: 5m/s with burst at 30000m.</description>
+<styleUrl>#yellowPoly</styleUrl>
+<LineString>
+<extrude>1</extrude>
+<tesselate>1</tesselate>
+<altitudeMode>absolute</altitudeMode>
+<coordinates>
+
+</coordinates>
+</LineString></Placemark>
+<Placemark><LineString><altitudeMode>absolute</altitudeMode><coordinates></coordinates></LineString><Style><LineStyle><color>#ff0000ff</color></LineStyle></Style></Placemark>
+</Document></kml>
